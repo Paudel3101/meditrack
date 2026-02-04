@@ -1,6 +1,3 @@
--- Create Database
-CREATE DATABASE IF NOT EXISTS meditrack_db;
-
 -- Staff Table
 CREATE TABLE IF NOT EXISTS staff (
   id INT PRIMARY KEY AUTO_INCREMENT,
