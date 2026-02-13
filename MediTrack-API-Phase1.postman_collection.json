@@ -1,0 +1,695 @@
+{
+  "info": {
+    "_postman_id": "meditrack-api-phase1",
+    "name": "MediTrack API - Phase 1",
+    "description": "Complete API documentation and testing collection for MediTrack Clinic Management System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "description": "Staff authentication endpoints for login, registration, and session management",
+      "item": [
+        {
+          "name": "Register Staff",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"doctor@meditrack.com\",\n  \"password\": \"SecurePass123!\",\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\",\n  \"role\": \"Doctor\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/auth/register",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "description": "Register a new staff member. Password must have:\n- Minimum 8 characters\n- At least one uppercase letter\n- At least one number\n- At least one special character"
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"doctor@meditrack.com\",\n  \"password\": \"SecurePass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/auth/login",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Authenticate staff member and receive JWT token.\n\nResponse includes JWT token that should be used in Authorization header for subsequent requests."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/auth/profile",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "auth", "profile"]
+            },
+            "description": "Get current authenticated user's profile information"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Password",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"SecurePass123!\",\n  \"newPassword\": \"NewSecurePass456!\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/auth/password",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "auth", "password"]
+            },
+            "description": "Update password for authenticated user. Requires verification of current password."
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/auth/logout",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "auth", "logout"]
+            },
+            "description": "Logout current authenticated user. Client should remove token from storage."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Patients",
+      "description": "Patient management endpoints for CRUD operations",
+      "item": [
+        {
+          "name": "Get All Patients",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/patients?search=&is_archived=false",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "patients"],
+              "query": [
+                {
+                  "key": "search",
+                  "value": ""
+                },
+                {
+                  "key": "is_archived",
+                  "value": "false"
+                }
+              ]
+            },
+            "description": "Retrieve all patients with optional filtering by search term and archive status"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Patient by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/patients/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "patients", "1"]
+            },
+            "description": "Retrieve a specific patient's details by ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Patients",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/patients/search?q=John",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "patients", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "John"
+                }
+              ]
+            },
+            "description": "Search patients by name, medical record number, phone, or email"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Patient",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"medical_record_number\": \"MRN-2024-001\",\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Smith\",\n  \"date_of_birth\": \"1990-05-15\",\n  \"gender\": \"Female\",\n  \"phone\": \"555-1234\",\n  \"email\": \"jane.smith@email.com\",\n  \"allergies\": \"Penicillin\",\n  \"blood_type\": \"O+\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/patients",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "patients"]
+            },
+            "description": "Create a new patient record. Medical record number must be unique."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Patient",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Smith-Johnson\",\n  \"phone\": \"555-5678\",\n  \"allergies\": \"Penicillin, Sulfa\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/patients/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "patients", "1"]
+            },
+            "description": "Update patient information. Only provided fields are updated."
+          },
+          "response": []
+        },
+        {
+          "name": "Archive Patient",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/patients/1/archive",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "patients", "1", "archive"]
+            },
+            "description": "Soft delete - archive a patient record without permanently removing data"
+          },
+          "response": []
+        },
+        {
+          "name": "Unarchive Patient",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/patients/1/unarchive",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "patients", "1", "unarchive"]
+            },
+            "description": "Restore an archived patient record"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Appointments",
+      "description": "Appointment scheduling and management endpoints",
+      "item": [
+        {
+          "name": "Get All Appointments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/appointments?date=2024-02-20&status=scheduled",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "appointments"],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2024-02-20"
+                },
+                {
+                  "key": "status",
+                  "value": "scheduled"
+                }
+              ]
+            },
+            "description": "Retrieve all appointments with optional filtering by date and status"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Appointment by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/appointments/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "appointments", "1"]
+            },
+            "description": "Retrieve a specific appointment's details"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Appointment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patient_id\": 1,\n  \"staff_id\": 2,\n  \"appointment_date\": \"2024-02-25\",\n  \"appointment_time\": \"14:30\",\n  \"type\": \"checkup\",\n  \"reason\": \"Annual checkup\",\n  \"notes\": \"Patient reports headaches\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/appointments",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "appointments"]
+            },
+            "description": "Schedule a new appointment. System checks for scheduling conflicts."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Appointment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"appointment_date\": \"2024-02-26\",\n  \"appointment_time\": \"15:00\",\n  \"notes\": \"Rescheduled - Patient requested later time\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/appointments/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "appointments", "1"]
+            },
+            "description": "Update appointment details"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Appointment Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"completed\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/appointments/1/status",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "appointments", "1", "status"]
+            },
+            "description": "Update appointment status (scheduled, completed, cancelled, no-show)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Appointment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/appointments/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "appointments", "1"]
+            },
+            "description": "Permanently delete an appointment record"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Staff Management",
+      "description": "Staff member management endpoints (Admin only)",
+      "item": [
+        {
+          "name": "Get All Staff",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/staff",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "staff"]
+            },
+            "description": "Retrieve all staff members (Admin or Receptionist only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Staff by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/staff/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "staff", "1"]
+            },
+            "description": "Retrieve a specific staff member's details"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Staff",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"nurse@meditrack.com\",\n  \"password\": \"SecurePass123!\",\n  \"first_name\": \"Sarah\",\n  \"last_name\": \"Johnson\",\n  \"role\": \"Nurse\",\n  \"phone\": \"555-9999\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/staff",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "staff"]
+            },
+            "description": "Create a new staff member (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Staff",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"555-8888\",\n  \"specialization\": \"Cardiology\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/staff/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "staff", "1"]
+            },
+            "description": "Update staff member information (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Deactivate Staff",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/staff/1/deactivate",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "staff", "1", "deactivate"]
+            },
+            "description": "Deactivate a staff member (Admin only). Prevents them from logging in."
+          },
+          "response": []
+        },
+        {
+          "name": "Reactivate Staff",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/staff/1/reactivate",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "staff", "1", "reactivate"]
+            },
+            "description": "Reactivate a previously deactivated staff member (Admin only)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "description": "Dashboard statistics and analytics endpoints",
+      "item": [
+        {
+          "name": "Get Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/dashboard/stats",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "dashboard", "stats"]
+            },
+            "description": "Get clinic statistics including patient count, appointment counts, and today's appointments"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Recent Appointments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/dashboard/recent-appointments",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "dashboard", "recent-appointments"]
+            },
+            "description": "Get the most recent appointments for dashboard display"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Patient Count",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/dashboard/patient-count",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "dashboard", "patient-count"]
+            },
+            "description": "Get patient count including active and archived patients"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "System",
+      "description": "System endpoints for health checks and documentation",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/api/health",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "health"]
+            },
+            "description": "Check if API is running and responsive"
+          },
+          "response": []
+        },
+        {
+          "name": "API Documentation",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/api-docs",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api-docs"]
+            },
+            "description": "Interactive Swagger UI documentation for all endpoints"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "JWT_TOKEN",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
