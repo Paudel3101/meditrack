@@ -2,6 +2,8 @@ const express = require('express');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./config/swagger');
 require('dotenv').config();
 
 const db = require('./utils/db');
@@ -28,6 +30,15 @@ db.initialize().catch(error => {
   process.exit(1);
 });
 
+// API Documentation - Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customCss: '.swagger-ui .topbar { display: none }',
+  swaggerOptions: {
+    tagsSorter: 'alpha',
+    operationsSorter: 'alpha'
+  }
+}));
+
 // Routes
 app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/patients', require('./routes/patient.routes'));
@@ -46,10 +57,11 @@ app.get('/api/health', (req, res) => {
 
 // 404 handler
 app.use((req, res) => {
-  res.status(200).json({
-    success: true,
-    message: 'Welcome to the Healthcare Management System API',
-    path: req.path
+  res.status(404).json({
+    success: false,
+    message: 'Endpoint not found',
+    path: req.path,
+    method: req.method
   });
 });
 
